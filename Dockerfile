@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+ENV NODE_ENV=development
+# ENV NODE_ENV=production
 
 RUN npm install -g @nestjs/cli
 # RUN npm install --only=production 

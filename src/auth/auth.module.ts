@@ -7,13 +7,16 @@ import { AuthService } from './auth.service';
 import { GithubStrategy } from './passport/github.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './passport/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GithubStrategy],
+  providers: [AuthService, GithubStrategy, JwtStrategy],
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule,
+    PassportModule.register({
+      session: true,
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async ($: ConfigService) => ({
