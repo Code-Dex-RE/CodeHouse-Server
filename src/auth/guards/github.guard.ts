@@ -7,12 +7,14 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class GithubAuthGuard extends AuthGuard('github') {
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    // console.log('어스가드 깃허브 : ', context);
-    // console.log('어스가드 리퀘스트 :', request);
+    const result = (await super.canActivate(context)) as boolean;
 
-    return super.canActivate(context);
+    console.log('깃허브 어스가드 :', result);
+    await super.logIn(request);
+    return result;
+    // return super.canActivate(context);
   }
 
   handleRequest(err, user, info) {

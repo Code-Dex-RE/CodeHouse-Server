@@ -14,6 +14,7 @@ export enum Provider {
   FACEBOOK = 'facebook',
   GITHUB = 'github',
 }
+
 @Entity({ name: 'users' })
 export class User {
   // Columns

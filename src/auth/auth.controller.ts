@@ -8,9 +8,11 @@ import {
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { AuthenticatedGuard } from './guards/auth.guard';
+// import { AuthenticatedGuard } from './guards/auth.guard';
 import { GithubAuthGuard } from './guards/github.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { SessionGuard } from './guards/session.guard';
+import { SessionUser } from './sessionuser.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,10 +38,12 @@ export class AuthController {
     return this.authService.socialLogin(req, res);
   }
 
-  @Get('jwt/status')
-  @UseGuards(JwtAuthGuard)
-  jwtStatus() {
-    return 'JWT is working';
+  @Get('me')
+  @UseGuards(SessionGuard)
+  gitStatus(@SessionUser() user: any) {
+    //   gitStatus(@Req() req) {
+    return user;
+    // return { user: req.user };
   }
 
   @Get('logout')

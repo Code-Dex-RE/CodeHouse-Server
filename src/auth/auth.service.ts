@@ -61,7 +61,6 @@ export class AuthService {
 
   testSeesion(@Req() req) {
     const passedVariable = req.session.valid;
-    console.log('리디렉션과 같이 보낸 데이터 :', passedVariable);
     req.session.valid = null;
 
     return { message: '리디렉션 데이터', passedVariable };

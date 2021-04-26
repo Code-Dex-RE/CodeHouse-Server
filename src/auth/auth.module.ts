@@ -8,10 +8,11 @@ import { GithubStrategy } from './passport/github.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { GitSerializer } from './passport/git.serializer';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GithubStrategy, JwtStrategy],
+  providers: [AuthService, GithubStrategy, JwtStrategy, GitSerializer],
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({
