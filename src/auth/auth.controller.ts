@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiExcludeEndpoint,
   ApiOAuth2,
@@ -7,6 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 // import { AuthenticatedGuard } from './guards/auth.guard';
 import { GithubAuthGuard } from './guards/github.guard';
@@ -36,6 +45,11 @@ export class AuthController {
   ) {
     // @Res() res: Response
     return this.authService.socialLogin(req, res);
+  }
+
+  @Post()
+  registerUser(@Body() data: CreateUserDto) {
+    return this.authService.register(data);
   }
 
   @Get('me')

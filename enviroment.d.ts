@@ -3,6 +3,7 @@ declare namespace NodeJS {
   export interface ProcessEnv {
     PORT?: string;
     NODE_ENV?: string;
+    ALLOWED_HOSTS?: string;
     ENVIRONMENT: Environment;
     GIT_CLIENT_ID?: string;
     GIT_CLIENT_SECRETS?: string;

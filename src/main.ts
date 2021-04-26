@@ -12,12 +12,17 @@ import * as passport from 'passport';
 import { setSwagger } from './set-swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-
+import * as fs from 'fs';
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-
+const httpsOptions = {
+  key: fs.readFileSync('src/key.pem'),
+  cert: fs.readFileSync('src/cert.pem'),
+};
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    httpsOptions,
+  });
   const env = app.get(ConfigService);
   const allowedHosts = env.get('allowed-hosts');
 

@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { UserRepository } from 'src/user/repository/user.repository';
 import { User } from 'src/typeorm/entities/User';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -57,6 +58,11 @@ export class AuthService {
     };
 
     //유저 있으면 액세스 토큰 발급
+  }
+
+  async register(data: CreateUserDto) {
+    const newUser = await this.userRepository.createUser(data);
+    return newUser;
   }
 
   testSeesion(@Req() req) {

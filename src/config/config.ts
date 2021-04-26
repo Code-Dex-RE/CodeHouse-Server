@@ -8,7 +8,7 @@ import Joi from 'joi';
 // });
 
 const configuration = () => ({
-  'allowed-hosts': 'http://localhost:3333',
+  'allowed-hosts': process.env.ALLOWED_HOSTS,
   port: process.env.PORT,
   gitClientId: process.env.GIT_CLIENT_ID,
   gitClientSecrets: process.env.GIT_CLIENT_SECRETS,

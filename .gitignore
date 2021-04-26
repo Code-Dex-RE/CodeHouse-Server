@@ -35,3 +35,5 @@ lerna-debug.log*
 
 .env
 db/data
+cert.*
+*.pem
