@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
@@ -7,6 +8,7 @@ import {
   WsResponse,
 } from '@nestjs/websockets';
 import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Socket, Server } from 'socket.io';
 
 @WebSocketGateway()
@@ -17,8 +19,11 @@ export class ChatGateway {
   connectedUsers: string[] = [];
 
   @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: any): void {
-    this.server.emit('msgToClient', payload);
+  handleMessage(
+    @MessageBody() data: string,
+    @ConnectedSocket() client: Socket,
+  ): string {
+    return data;
     // return 'Hello world!';
   }
 

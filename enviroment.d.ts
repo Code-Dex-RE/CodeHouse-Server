@@ -7,6 +7,7 @@ declare namespace NodeJS {
     GIT_CLIENT_SECRETS?: string;
     GIT_CALLBACK_URL?: string;
     IN_CONTAINER?: string;
+    JWT_SECRET?: string;
   }
   export type Environment = 'DEVELOPMENT' | 'PRODUCTION' | 'TEST';
 }

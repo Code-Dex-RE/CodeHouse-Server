@@ -12,6 +12,7 @@ const configuration = () => ({
   gitClientId: process.env.GIT_CLIENT_ID,
   gitClientSecrets: process.env.GIT_CLIENT_SECRETS,
   gitCallbackURL: process.env.GIT_CALLBACK_URL,
+  jwtSecret: process.env.JWT_SECRET,
 });
 
 export const config: ConfigModuleOptions = {

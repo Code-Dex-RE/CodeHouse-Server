@@ -12,3 +12,11 @@
 > docker exec -it pg컨테이너Id bash
 > psql -U pro4
 > \d 테이블 확인
+
+## End Point
+
+base URI = http://localhost
+
+- uri/api
+
+- uri/docs
