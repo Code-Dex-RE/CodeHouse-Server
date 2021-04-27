@@ -42,7 +42,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  app.use(csurf());
+  //   app.use(csurf({ cookie: true }));
 
   app.useGlobalPipes(
     new ValidationPipe({

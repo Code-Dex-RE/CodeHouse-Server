@@ -19,7 +19,7 @@ import {
 import { Channel } from './Channel';
 import { User } from './User';
 
-@Entity({ name: 'channel_chats' })
+@Entity({ name: 'channel_members' })
 export class ChannelMember {
   // Columns
   @ApiProperty({ readOnly: true })
@@ -47,10 +47,10 @@ export class ChannelMember {
 
   // Relations
   @ManyToOne((type) => Channel, (channel) => channel.member)
-  @JoinColumn({ name: 'channel_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'channel_id' })
   channel!: Channel;
 
   @ManyToOne((type) => User, (user) => user.channel)
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'user_id' })
   user!: User;
 }

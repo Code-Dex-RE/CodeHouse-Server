@@ -4,7 +4,7 @@ import { CreateMemberDto } from '../dto/create-member.dto';
 import { ChannelMember } from '../entities/ChannelMember';
 
 @EntityRepository(ChannelMember)
-export class ChannelRepository extends Repository<ChannelMember> {
+export class MemberRepository extends Repository<ChannelMember> {
   async createChannel(data: CreateMemberDto) {
     const member = new ChannelMember();
     member.user_id = data.user_id;

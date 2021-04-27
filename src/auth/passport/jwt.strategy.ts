@@ -2,8 +2,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from 'src/user/repository/user.repository';
 import { User } from 'src/typeorm/entities/User';
+import { UserRepository } from 'src/typeorm/repository/user.repository';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,6 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const { userId } = payload;
 
     const user = await this.userRepostiroy.findOneOrFail(userId);
+    console.log('jwt 전략: 유저아이디', userId);
+    console.log('jwt 전략: 유저아이디', user);
 
     return user;
   }

@@ -10,10 +10,6 @@ export class CreateUserDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'john@doe.com' })
-  @IsEmail()
-  email: string;
-
   @ApiProperty({ required: false, example: 'gopher' })
   @IsString()
   @IsOptional()
@@ -24,7 +20,4 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   avatar?: string;
-
-  @ApiProperty({ enum: Provider, enumName: 'Provider' })
-  provider: Provider;
 }

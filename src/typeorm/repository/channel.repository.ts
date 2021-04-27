@@ -5,11 +5,10 @@ import { Channel } from '../entities/Channel';
 
 @EntityRepository(Channel)
 export class ChannelRepository extends Repository<Channel> {
-  async createChannel(data: CreateChannelDto) {
+  async createChannel(data: CreateChannelDto, userId) {
     const newChannel = new Channel();
     newChannel.name = data.name;
-    newChannel.url = data.url;
-    newChannel.host = data.host;
+    newChannel.host = userId;
 
     try {
       this.save(newChannel);

@@ -16,6 +16,7 @@ import {
 } from 'class-validator';
 import { ChannelChat } from './ChannelChat';
 import { ChannelMember } from './ChannelMember';
+import { Channel } from './Channel';
 
 export enum Provider {
   LOCAL = 'local',
@@ -32,31 +33,48 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '회원 이름입니다.', example: 'Pro4' })
-  @Column()
-  @IsString()
-  name: string;
-
   @ApiProperty({ example: 'aksjaslkdjfl@gmail.com' })
   @Column()
   @IsEmail()
-  email: string;
+  email!: string;
+
+  @ApiProperty({
+    description: '회원 이름입니다.',
+    example: 'Pro4',
+    required: false,
+  })
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  name?: string;
 
   @ApiProperty({ required: false })
   @Column({ nullable: true })
   @IsString()
-  bio: string;
+  @IsOptional()
+  bio?: string;
 
   @ApiProperty({ required: false, example: 'aws://이미지-주소' })
   @Column({ nullable: true })
   @IsString()
   @IsUrl()
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 
-  @ApiProperty({ enum: Provider, enumName: 'Provider' })
-  @Column({ type: 'enum', enum: Provider, default: Provider.GITHUB })
-  @IsEnum(Provider)
-  provider: Provider;
+  //   @ApiProperty({ enum: Provider, enumName: 'Provider' })
+  //   @Column({ type: 'enum', enum: Provider, default: Provider.GITHUB })
+  //   @IsEnum(Provider)
+  //   provider: Provider;
+
+  @ApiProperty({ description: '깃허브로 소셜 회원가입을 했나?' })
+  @Column({ default: false })
+  @IsBoolean()
+  github: boolean;
+
+  @ApiProperty({ description: '카카오로 소셜 회원가입을 했나?' })
+  @Column({ default: false })
+  @IsBoolean()
+  kakao: boolean;
 
   // Relations Ids
   @RelationId((self: User) => self.chat)
@@ -73,4 +91,7 @@ export class User {
     cascade: true,
   })
   channel: ChannelMember[];
+
+  @OneToMany((type) => Channel, (mychannel) => mychannel.host)
+  mychannel: Channel[];
 }

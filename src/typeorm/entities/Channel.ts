@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
@@ -17,6 +19,7 @@ import {
 } from 'class-validator';
 import { ChannelChat } from './ChannelChat';
 import { ChannelMember } from './ChannelMember';
+import { User } from './User';
 
 @Entity({ name: 'channels' })
 export class Channel {
@@ -33,17 +36,12 @@ export class Channel {
   @ApiProperty({ description: '채널 이름입니다.', example: '1번 채널입니다' })
   @IsString()
   @Column()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: '채널 소켓 아이디?' })
-  @Column()
+  @Column({ nullable: true })
   @IsString()
   url: string;
-
-  @ApiProperty({ description: '방 제공자 입니다.', example: 'Pro4' })
-  @Column()
-  @IsString()
-  host: string;
 
   // Relations Ids
 
@@ -53,6 +51,9 @@ export class Channel {
   @RelationId((self: Channel) => self.member)
   member_id!: string[];
 
+  @Column()
+  host_id!: string;
+
   // Relations
   @OneToMany((type) => ChannelChat, (chat) => chat.channel, { cascade: true })
   chat!: ChannelChat[];
@@ -61,4 +62,9 @@ export class Channel {
     cascade: true,
   })
   member!: ChannelMember[];
+
+  @ApiProperty({ description: '방 제공자 입니다.', example: '빌게이츠' })
+  @ManyToOne((type) => User, (host) => host.mychannel, { cascade: true })
+  @JoinColumn({ name: 'host_id', referencedColumnName: 'id' })
+  host!: User;
 }

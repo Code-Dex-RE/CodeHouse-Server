@@ -16,12 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { CreateUserDto } from 'src/typeorm/dto/create-user.dto';
 import { User } from 'src/typeorm/entities/User';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 // import { AuthenticatedGuard } from './guards/auth.guard';
 import { GithubAuthGuard } from './guards/github.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+// import { JwtAuthGuard } from './guards/jwt.guard';
 import { SessionGuard } from './guards/session.guard';
 import { SessionUser } from './sessionuser.decorator';
 
@@ -45,17 +46,17 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // @Res() res: Response
     return this.authService.socialLogin(req, res);
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({
     description: '유저 회원가입',
     type: User,
   })
-  registerUser(@Body() data: CreateUserDto) {
-    return this.authService.register(data);
+  registerUser(@Req() req, @Body() data: CreateUserDto) {
+    return this.authService.register(req, data);
   }
 
   @Get('me')
@@ -63,12 +64,12 @@ export class AuthController {
     description: '유저 확인',
     type: User,
   })
-  @UseGuards(SessionGuard)
+  @UseGuards(JwtAuthGuard)
+  //   @UseGuards(SessionGuard)
   gitStatus(@SessionUser() user: any) {
-    //   gitStatus(@Req() req) {
     return user;
-    // return { user: req.user };
   }
+
   @ApiCreatedResponse({
     description: '유저 로그아웃',
   })

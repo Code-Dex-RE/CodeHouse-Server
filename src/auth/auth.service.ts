@@ -8,9 +8,9 @@ import {
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
-import { UserRepository } from 'src/user/repository/user.repository';
 import { User } from 'src/typeorm/entities/User';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UserRepository } from 'src/typeorm/repository/user.repository';
+import { CreateUserDto } from 'src/typeorm/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,46 +22,63 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // 깃 어스 로그인 성공 -> 프런트 회원가입 폼으로 req_user 전송?
   async socialLogin(@Req() req, @Res() res) {
     if (!req.user) {
       throw new BadRequestException('로그인 안되었습니다.');
     }
-    const { email } = req.user;
+    const { email, provider } = req.user;
 
     const user = await this.userRepository.findOne({ email });
-    this.logger.verbose(`소셜`);
 
     //유저가 없으면 로그인 폼으로 리디렉션
+    // 유저가 로그인 클릭 -> 패스포트로 깃헙 로그인 -> 이메일과 프로바이더로 기초 회원가입
+    // 클라 회원가입 폼으로 리디렉션 ->
     if (!user) {
-      req.session.valid = req.user;
-      //깃에서 받아온 유저정보를 리디렉션 to 로그인 폼
-      return res.redirect('/api/auth/test');
-      //   return res.redirect(client_url_signup);
-      //------------------
-      //   const newUser = await this.userRepository.createUser(req.user);
-      //   this.logger.verbose(`소셜 회원가입`);
-      //   console.log(newUser);
-      //   return {
-      //     message: '소셜 깃헙으로 회원가입',
-      //     user: newUser,
-      //     accessToken: this.jwtService.sign({ userId: newUser.id }),
-      //   };
-    }
-    this.logger.verbose(`소셜 로그인 : ${user}`);
-    console.log(user);
+      const newUser = new User();
+      newUser.email = email;
+      newUser[provider] = true;
+      await this.userRepository.save(newUser);
 
+      const accessToken = this.jwtService.sign({ userId: newUser.id });
+      //   res.cookie('jwt', accessToken, { httponly: true });
+
+      //   return res.redirect(this.client_url_signup);
+      return {
+        message: '회원가입 성공 후 리디렉션',
+        user: newUser,
+        accessToken,
+      };
+    }
+
+    if (provider === 'github' && !user.github) {
+      user[provider] = true;
+      await this.userRepository.save(user);
+    }
+    if (provider === 'kakao' && !user.kakao) {
+      user[provider] = true;
+      await this.userRepository.save(user);
+    }
+
+    this.logger.verbose(`소셜 로그인 : ${user}`);
+
+    const accessToken = this.jwtService.sign({ userId: user.id });
+    // res.cookie('jwt', accessToken, { httponly: true });
     return {
-      message: '소셜 깃헙으로 로그인 하였습니다!',
+      message: '소셜 로그인 하였습니다!',
       user: req.user,
-      accessToken: this.jwtService.sign({ userId: user.id }),
+      accessToken,
     };
 
     //유저 있으면 액세스 토큰 발급
   }
 
-  async register(data: CreateUserDto) {
-    const newUser = await this.userRepository.createUser(data);
+  async register(req, data: CreateUserDto) {
+    const { email } = req.user;
+    const { name, bio } = data;
+    const newUser = await this.userRepository.findOne({ email });
+    newUser.name = name;
+    newUser.bio = bio;
+    await this.userRepository.save(newUser);
     return newUser;
   }
 

@@ -8,7 +8,19 @@ import { AuthGuard } from '@nestjs/passport';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
+    console.log('jwt어스가드 ');
     return super.canActivate(context);
+
+    // const httpContext = context.switchToHttp();
+    // const request = httpContext.getRequest();
+
+    // try {
+    //   if (request.session.passport.user) {
+    //     return true;
+    //   }
+    // } catch (e) {
+    //   throw new UnauthorizedException('세션가드 시리얼라이즈 안됨', e);
+    // }
   }
 
   handleRequest(err, user, info) {

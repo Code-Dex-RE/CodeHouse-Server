@@ -4,8 +4,8 @@ import { CreateChatDto } from '../dto/create-chat.dto';
 import { ChannelChat } from '../entities/ChannelChat';
 
 @EntityRepository(ChannelChat)
-export class ChannelRepository extends Repository<ChannelChat> {
-  async createChannel(data: CreateChatDto) {
+export class ChatRepository extends Repository<ChannelChat> {
+  async createChat(data: CreateChatDto) {
     const chat = new ChannelChat();
     chat.comment = data.comment;
     chat.user_id = data.user_id;
