@@ -1,4 +1,4 @@
-// eslint-disable-next-line prettier/prettier
+/* eslint-disable prettier/prettier */
 declare namespace NodeJS {
   export interface ProcessEnv {
     PORT?: string;

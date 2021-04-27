@@ -9,12 +9,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { GitSerializer } from './passport/git.serializer';
+import { UserRepository } from 'src/user/repository/user.repository';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, GithubStrategy, JwtStrategy, GitSerializer],
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserRepository]),
     PassportModule.register({
       session: true,
     }),

@@ -8,7 +8,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async createUser(data) {
+  async createUser(data: CreateUserDto) {
     const { email, provider, avatar, bio, name } = data;
     const user = await this.findOne({ email });
     if (user) {

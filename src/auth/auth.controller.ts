@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiCreatedResponse,
   ApiExcludeEndpoint,
   ApiOAuth2,
   ApiOkResponse,
@@ -15,6 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { User } from 'src/typeorm/entities/User';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 // import { AuthenticatedGuard } from './guards/auth.guard';
@@ -48,18 +50,28 @@ export class AuthController {
   }
 
   @Post()
+  @ApiCreatedResponse({
+    description: '유저 회원가입',
+    type: User,
+  })
   registerUser(@Body() data: CreateUserDto) {
     return this.authService.register(data);
   }
 
   @Get('me')
+  @ApiCreatedResponse({
+    description: '유저 확인',
+    type: User,
+  })
   @UseGuards(SessionGuard)
   gitStatus(@SessionUser() user: any) {
     //   gitStatus(@Req() req) {
     return user;
     // return { user: req.user };
   }
-
+  @ApiCreatedResponse({
+    description: '유저 로그아웃',
+  })
   @Get('logout')
   //   @UseGuards(AuthenticatedGuard)
   logout(@Req() req: Request, @Res() res) {
