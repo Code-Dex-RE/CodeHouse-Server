@@ -12,6 +12,9 @@ declare namespace NodeJS {
     JWT_SECRET?: string;
     COOKIE_SECRET?: string;
     CLIENT_URL_SIGNUP?: string;
+    KAKAO_CLIENT_ID?: string;
+    KAKAO_CLIENT_SECRETS?: string;
+    KAKAO_CALLBACK_URL?: string;
   }
   export type Environment = 'DEVELOPMENT' | 'PRODUCTION' | 'TEST';
 }

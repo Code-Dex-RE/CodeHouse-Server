@@ -8,12 +8,21 @@ import { GithubStrategy } from './passport/github.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
-import { GitSerializer } from './passport/git.serializer';
+import { GithubSerializer } from './passport/git.serializer';
 import { UserRepository } from 'src/typeorm/repository/user.repository';
+import { KakaoStrategy } from './passport/kakao.strategy';
+import { KakaoSerializer } from './passport/kakao.serializer';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GithubStrategy, JwtStrategy, GitSerializer],
+  providers: [
+    AuthService,
+    KakaoStrategy,
+    GithubStrategy,
+    JwtStrategy,
+    GithubSerializer,
+    KakaoSerializer,
+  ],
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
     PassportModule.register({

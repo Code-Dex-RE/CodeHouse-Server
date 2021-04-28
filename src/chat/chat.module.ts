@@ -5,6 +5,7 @@ import { ChatRepository } from 'src/typeorm/repository/chat.repository';
 import { MemberRepository } from 'src/typeorm/repository/member.repository';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ChatController } from './chat.controller';
       MemberRepository,
     ]),
   ],
-  providers: [ChatService],
+  providers: [ChatService, ChatGateway],
   controllers: [ChatController],
 })
 export class ChatModule {}

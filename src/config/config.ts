@@ -16,6 +16,9 @@ const configuration = () => ({
   jwtSecret: process.env.JWT_SECRET,
   'cookie-secret': process.env.COOKIE_SECRET,
   client_url_signup: process.env.CLIENT_URL_SIGNUP,
+  kakaoClientId: process.env.KAKAO_CLIENT_ID,
+  kakaoClientSecrets: process.env.KAKAO_CLIENT_SECRETS,
+  kakaoCallbackURL: process.env.KAKAO_CALLBACK_URL,
 });
 
 export const config: ConfigModuleOptions = {

@@ -22,6 +22,7 @@ import { AuthService } from './auth.service';
 // import { AuthenticatedGuard } from './guards/auth.guard';
 import { GithubAuthGuard } from './guards/github.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { KakaoAuthGuard } from './guards/kakao.guard';
 // import { JwtAuthGuard } from './guards/jwt.guard';
 import { SessionGuard } from './guards/session.guard';
 import { SessionUser } from './sessionuser.decorator';
@@ -49,6 +50,24 @@ export class AuthController {
     return this.authService.socialLogin(req, res);
   }
 
+  @Get('kakao')
+  @ApiOperation({ description: '깃헙 OAuth2로 로그인 및 회원가입' })
+  @ApiOAuth2(['user:email'], 'github')
+  @ApiOkResponse({ description: '깃헙 접근 성공' })
+  @UseGuards(KakaoAuthGuard)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async kakaoAuth(@Req() req): Promise<void> {}
+
+  @Get('kakao/callback')
+  @ApiExcludeEndpoint()
+  @UseGuards(KakaoAuthGuard)
+  kakaoAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.socialLogin(req, res);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({
@@ -64,8 +83,8 @@ export class AuthController {
     description: '유저 확인',
     type: User,
   })
-  @UseGuards(JwtAuthGuard)
-  //   @UseGuards(SessionGuard)
+  //   @UseGuards(JwtAuthGuard)
+  @UseGuards(SessionGuard)
   gitStatus(@SessionUser() user: any) {
     return user;
   }

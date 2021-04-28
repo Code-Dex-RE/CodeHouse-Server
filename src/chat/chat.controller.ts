@@ -18,6 +18,10 @@ import { ChatService } from './chat.service';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  /**
+   *
+   * @todo 전부다 임시임 -> chat gateway에서 서비스 로직 직접연결
+   */
   @Get()
   getChannels() {
     return this.chatService.getChannels();

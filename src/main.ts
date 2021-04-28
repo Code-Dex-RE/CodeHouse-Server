@@ -15,21 +15,30 @@ import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-const httpsOptions = {
-  key: fs.readFileSync('src/key.pem'),
-  cert: fs.readFileSync('src/cert.pem'),
-};
+// const httpsOptions = {
+//   key: fs.readFileSync('src/key.pem'),
+//   cert: fs.readFileSync('src/cert.pem'),
+// };
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  //   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  //     httpsOptions,
+  //   });
   const env = app.get(ConfigService);
   const allowedHosts = env.get('allowed-hosts');
 
   const port = env.get('port') || 3333;
   app.set('trust proxy', 1);
   //   app.enableCors({ credentials: true, origin: 'http://localhost:3333' });
-  app.enableCors({ credentials: true, origin: allowedHosts });
+  //   app.enableCors();
+  app.enableCors({
+    origin: allowedHosts,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+    allowedHeaders:
+      'Origin,X-Requested-With,Content-Type,Accept,Authorization,authorization,X-Forwarded-for',
+  });
 
   app.use(
     session({
@@ -41,6 +50,7 @@ async function bootstrap() {
       saveUninitialized: false,
     }),
   );
+
   app.use(cookieParser());
   //   app.use(csurf({ cookie: true }));
 
