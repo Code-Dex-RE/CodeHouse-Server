@@ -16,6 +16,7 @@ import { CreateUserDto } from 'src/typeorm/dto/create-user.dto';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly client_url_signup = process.env.CLIENT_URL_SIGNUP;
+  private readonly client_url_home = 'http://localhost:8000/home';
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -26,12 +27,10 @@ export class AuthService {
     if (!req.user) {
       throw new BadRequestException('로그인 안되었습니다.');
     }
+    console.log('유저 : ', req.user);
     const { email, provider } = req.user;
     const user = await this.userRepository.findOne({ email });
 
-    //유저가 없으면 로그인 폼으로 리디렉션
-    // 유저가 로그인 클릭 -> 패스포트로 깃헙 로그인 -> 이메일과 프로바이더로 기초 회원가입
-    // 클라 회원가입 폼으로 리디렉션 ->
     if (!user) {
       //   req.session.vaild = req.user;
       const newUser = new User();
@@ -39,15 +38,10 @@ export class AuthService {
       newUser[provider] = true;
       await this.userRepository.save(newUser);
 
-      //   const accessToken = this.jwtService.sign({ userId: newUser.id });
-      //   res.cookie('jwt', accessToken, { httponly: true });
+      const accessToken = this.jwtService.sign({ userId: newUser.id });
+      res.cookie('jwt', accessToken, { httpOnly: true });
 
       return res.redirect(this.client_url_signup);
-      //   return {
-      //     message: '회원가입 성공 후 리디렉션',
-      //     user: newUser,
-      //     accessToken,
-      //   };
     }
 
     if (provider === 'github' && !user.github) {
@@ -59,19 +53,16 @@ export class AuthService {
       await this.userRepository.save(user);
     }
 
-    this.logger.verbose(`소셜 로그인 : ${user}`);
-
     const accessToken = this.jwtService.sign({ userId: user.id });
-    // res.cookie('jwt', accessToken, { httponly: true });
-    return res.redirect(this.client_url_signup);
 
-    return {
-      message: '소셜 로그인 하였습니다!',
-      user: req.user,
-      accessToken,
-    };
+    //유저 이름 설정 안되어있으면 회원가입 창으로 리디렉션
+    if (user.name === null) {
+      res.cookie('jwt', accessToken, { httpOnly: true });
+      return res.redirect(this.client_url_signup);
+    }
 
-    //유저 있으면 액세스 토큰 발급
+    res.cookie('jwt', accessToken, { httpOnly: true });
+    return res.redirect(this.client_url_home);
   }
 
   async register(req, data: CreateUserDto) {

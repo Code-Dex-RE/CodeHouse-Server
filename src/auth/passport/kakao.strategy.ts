@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-github2';
+import { Strategy } from 'passport-kakao';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Provider } from 'src/typeorm/entities/User';
@@ -14,7 +14,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       clientSecret: $.get<string>('kakaoClientSecrets'),
       callbackURL: $.get<string>('kakaoCallbackURL'),
       proxy: true,
-      scope: ['user:email'],
+      scope: ['account_email', 'profile'],
     });
   }
 
@@ -24,15 +24,21 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     profile: any,
     done: any,
   ): Promise<any> {
-    const { email, sub, avatar_url, bio, name } = profile._json;
+    const {
+      id,
+      kakao_account: {
+        email,
+        profile: { nickname },
+      },
+    } = profile._json;
 
+    console.log('카카오 프로필 제이슨: ', profile._json);
+    console.log('카카오 프로필 제이슨: ', id, email, nickname);
     const user = {
       provider: Provider.KAKAO,
-      avatar: avatar_url,
-      social_id: sub,
-      bio,
-      email: email || profile.emails[0].value,
-      name,
+      social_id: id,
+      email: email,
+      name: nickname,
     };
 
     done(null, user);

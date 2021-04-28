@@ -17,6 +17,7 @@ import {
 import { ChannelChat } from './ChannelChat';
 import { ChannelMember } from './ChannelMember';
 import { Channel } from './Channel';
+import { ExclusionMetadata } from 'typeorm/metadata/ExclusionMetadata';
 
 export enum Provider {
   LOCAL = 'local',
@@ -61,11 +62,14 @@ export class User {
   @IsOptional()
   avatar?: string;
 
+  @Column({ nullable: true })
+  //   @ExclusionMetadata()
+  currentHasedRefreshToken?: string;
+
   //   @ApiProperty({ enum: Provider, enumName: 'Provider' })
   //   @Column({ type: 'enum', enum: Provider, default: Provider.GITHUB })
   //   @IsEnum(Provider)
   //   provider: Provider;
-
   @ApiProperty({ description: '깃허브로 소셜 회원가입을 했나?' })
   @Column({ default: false })
   @IsBoolean()

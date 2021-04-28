@@ -51,9 +51,9 @@ export class AuthController {
   }
 
   @Get('kakao')
-  @ApiOperation({ description: '깃헙 OAuth2로 로그인 및 회원가입' })
-  @ApiOAuth2(['user:email'], 'github')
-  @ApiOkResponse({ description: '깃헙 접근 성공' })
+  @ApiOperation({ description: '카카오 OAuth2로 로그인 및 회원가입' })
+  @ApiOAuth2(['email', 'profile'], 'kakao')
+  @ApiOkResponse({ description: '카카오 접근 성공' })
   @UseGuards(KakaoAuthGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async kakaoAuth(@Req() req): Promise<void> {}
@@ -70,6 +70,7 @@ export class AuthController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  //   @UseGuards(SessionGuard)
   @ApiCreatedResponse({
     description: '유저 회원가입',
     type: User,
@@ -80,12 +81,22 @@ export class AuthController {
 
   @Get('me')
   @ApiCreatedResponse({
-    description: '유저 확인',
+    description: '유저 확인 by Passport',
     type: User,
   })
   //   @UseGuards(JwtAuthGuard)
   @UseGuards(SessionGuard)
   gitStatus(@SessionUser() user: any) {
+    return user;
+  }
+
+  @Get('me/jwt')
+  @ApiCreatedResponse({
+    description: '유저 확인 by JWT',
+    type: User,
+  })
+  @UseGuards(JwtAuthGuard)
+  gitStatusByJwt(@SessionUser() user: any) {
     return user;
   }
 

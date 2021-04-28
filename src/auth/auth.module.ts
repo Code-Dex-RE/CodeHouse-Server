@@ -17,10 +17,10 @@ import { KakaoSerializer } from './passport/kakao.serializer';
   controllers: [AuthController],
   providers: [
     AuthService,
-    KakaoStrategy,
     GithubStrategy,
-    JwtStrategy,
     GithubSerializer,
+    JwtStrategy,
+    KakaoStrategy,
     KakaoSerializer,
   ],
   imports: [
@@ -32,6 +32,7 @@ import { KakaoSerializer } from './passport/kakao.serializer';
       imports: [ConfigModule],
       useFactory: async ($: ConfigService) => ({
         secret: $.get<string>('jwtSecret'),
+        signOptions: { expiresIn: '2h' },
       }),
       inject: [ConfigService],
     }),
