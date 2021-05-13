@@ -10,20 +10,29 @@ import * as cookieParser from 'cookie-parser';
 import * as csurf from 'csurf';
 import * as passport from 'passport';
 import { setSwagger } from './set-swagger';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-// const httpsOptions = {
-//   key: fs.readFileSync('src/key.pem'),
-//   cert: fs.readFileSync('src/cert.pem'),
-// };
+import { Server, createServer } from 'https';
+import express from 'express';
+
+import { ExpressPeerServer } from 'peer';
+
+const httpsOptions = {
+  key: fs.readFileSync('src/key.pem'),
+  cert: fs.readFileSync('src/cert.pem'),
+};
+// const app_ex = express();
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  //   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-  //     httpsOptions,
-  //   });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    // httpsOptions,
+  });
+
   const env = app.get(ConfigService);
   const allowedHosts = env.get('allowed-hosts');
 
@@ -36,6 +45,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 200,
+    credentials: true,
+    exposedHeaders: ['Authorization'],
     allowedHeaders:
       'Origin,X-Requested-With,Content-Type,Accept,Authorization,authorization,X-Forwarded-for',
   });

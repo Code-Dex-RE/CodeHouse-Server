@@ -11,12 +11,14 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/typeorm/entities/User';
 import { UserRepository } from 'src/typeorm/repository/user.repository';
 import { CreateUserDto } from 'src/typeorm/dto/create-user.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly client_url_signup = process.env.CLIENT_URL_SIGNUP;
-  private readonly client_url_home = 'http://localhost:8000/home';
+  private readonly client_url_signup =
+    process.env.CLIENT_URL_SIGNUP || 'http://localhost:8000/signup';
+  private readonly client_url_home = 'http://localhost:8000';
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -27,9 +29,11 @@ export class AuthService {
     if (!req.user) {
       throw new BadRequestException('로그인 안되었습니다.');
     }
-    console.log('유저 : ', req.user);
+    console.log('소셜로그인, 유저 : ', req.user);
     const { email, provider } = req.user;
     const user = await this.userRepository.findOne({ email });
+
+    console.log('유저  :', user);
 
     if (!user) {
       //   req.session.vaild = req.user;
@@ -39,8 +43,14 @@ export class AuthService {
       await this.userRepository.save(newUser);
 
       const accessToken = this.jwtService.sign({ userId: newUser.id });
-      res.cookie('jwt', accessToken, { httpOnly: true });
 
+      //   return { user: req.user };
+      res.setHeader('Authorization', accessToken);
+      //처음 jwt 만들고
+      // 클라이언트에서 jwt를 헤더에 넣은 후 cookie에서 삭제
+
+      res.cookie('jwt', accessToken, { httpOnly: true });
+      //   return { 토큰: accessToken };
       return res.redirect(this.client_url_signup);
     }
 
@@ -56,29 +66,41 @@ export class AuthService {
     const accessToken = this.jwtService.sign({ userId: user.id });
 
     //유저 이름 설정 안되어있으면 회원가입 창으로 리디렉션
-    if (user.name === null) {
+
+    if (user.name === '' || user.name === null || user.name === undefined) {
+      //   return { user: req.user };
+
       res.cookie('jwt', accessToken, { httpOnly: true });
       return res.redirect(this.client_url_signup);
+      //   return { 토큰: accessToken };
     }
+
+    // return { accessToken };
+    // return { user: req.user };
 
     res.cookie('jwt', accessToken, { httpOnly: true });
     return res.redirect(this.client_url_home);
+    // return { 토큰: accessToken };
   }
 
   async register(req, data: CreateUserDto) {
     const { email } = req.user;
     const { name, bio } = data;
     const newUser = await this.userRepository.findOne({ email });
+    if (!newUser) {
+      throw new BadRequestException('소셜로그인이 안되어있습니다.');
+    }
+    console.log('레지스터 :', data);
     newUser.name = name;
     newUser.bio = bio;
     await this.userRepository.save(newUser);
     return newUser;
   }
 
-  testSeesion(@Req() req) {
-    const passedVariable = req.session.valid;
-    req.session.valid = null;
+  testSeesion(req, res) {
+    // const passedVariable = req.session.valid;
+    // req.session.valid = null;
 
-    return { message: '리디렉션 데이터', passedVariable };
+    return { req, res };
   }
 }

@@ -5,7 +5,7 @@ import { User } from 'src/typeorm/entities/User';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GithubStrategy } from './passport/github.strategy';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { GithubSerializer } from './passport/git.serializer';
@@ -22,6 +22,7 @@ import { KakaoSerializer } from './passport/kakao.serializer';
     JwtStrategy,
     KakaoStrategy,
     KakaoSerializer,
+    // JwtService,
   ],
   imports: [
     TypeOrmModule.forFeature([UserRepository]),
@@ -30,12 +31,13 @@ import { KakaoSerializer } from './passport/kakao.serializer';
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async ($: ConfigService) => ({
-        secret: $.get<string>('jwtSecret'),
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('jwtSecret'),
         signOptions: { expiresIn: '2h' },
       }),
       inject: [ConfigService],
     }),
   ],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

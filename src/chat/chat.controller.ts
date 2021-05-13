@@ -47,7 +47,17 @@ export class ChatController {
 
   @Get('join/:channelId')
   @UseGuards(JwtAuthGuard)
-  joinChannel(@Req() req, @Param('channelId') channelId: string) {
+  joinChannel(@Req() req, @Param('channelId') channelId: number) {
     return this.chatService.joinChannel(req, channelId);
+  }
+
+  @Get('kick/:channel_id/:member_id')
+  @UseGuards(JwtAuthGuard)
+  kickMember(
+    @Req() req,
+    @Param('channel_id') channelId: number,
+    @Param('member_id') memberId: number,
+  ) {
+    return this.chatService.kickMember(req.user.id, channelId, memberId);
   }
 }

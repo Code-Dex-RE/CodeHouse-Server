@@ -62,10 +62,6 @@ export class User {
   @IsOptional()
   avatar?: string;
 
-  @Column({ nullable: true })
-  //   @ExclusionMetadata()
-  currentHasedRefreshToken?: string;
-
   //   @ApiProperty({ enum: Provider, enumName: 'Provider' })
   //   @Column({ type: 'enum', enum: Provider, default: Provider.GITHUB })
   //   @IsEnum(Provider)
@@ -92,7 +88,7 @@ export class User {
   chat: ChannelChat[];
 
   @OneToMany((type) => ChannelMember, (channel) => channel.user, {
-    cascade: true,
+    // cascade: true,
   })
   channel: ChannelMember[];
 

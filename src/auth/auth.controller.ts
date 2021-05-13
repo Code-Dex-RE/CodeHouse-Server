@@ -99,6 +99,24 @@ export class AuthController {
   gitStatusByJwt(@SessionUser() user: any) {
     return user;
   }
+  @Get('me/git')
+  @ApiCreatedResponse({
+    description: '유저 확인 by JWT',
+    type: User,
+  })
+  @UseGuards(GithubAuthGuard)
+  gitStatusBygit(@SessionUser() user: any) {
+    return user;
+  }
+  @Get('me/kakao')
+  @ApiCreatedResponse({
+    description: '유저 확인 by JWT',
+    type: User,
+  })
+  @UseGuards(KakaoAuthGuard)
+  kakaoStatusByJwt(@SessionUser() user: any) {
+    return user;
+  }
 
   @ApiCreatedResponse({
     description: '유저 로그아웃',
@@ -114,7 +132,7 @@ export class AuthController {
   }
 
   @Get('test')
-  testSeesion(@Req() req) {
-    return this.authService.testSeesion(req);
+  testSeesion(@Req() req, @Res() res) {
+    return this.authService.testSeesion(req, res);
   }
 }

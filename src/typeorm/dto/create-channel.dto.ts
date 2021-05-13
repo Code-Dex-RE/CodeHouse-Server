@@ -10,4 +10,13 @@ export class CreateChannelDto {
   @IsNumberString()
   @IsOptional()
   url?: string;
+
+  @ApiProperty({
+    description: '채널 설명입니다..',
+    example: '채널 설명입니다.',
+    required: false,
+  })
+  @IsNumberString()
+  @IsOptional()
+  dep?: string;
 }

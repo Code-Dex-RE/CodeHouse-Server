@@ -16,7 +16,7 @@ export class CreateUserDto {
   @Length(3, 50)
   bio?: string;
 
-  @ApiProperty({ required: false, example: 'awa://이미지-주소' })
+  @ApiProperty({ required: false, example: 'awsS3://이미지-주소' })
   @IsString()
   @IsOptional()
   avatar?: string;

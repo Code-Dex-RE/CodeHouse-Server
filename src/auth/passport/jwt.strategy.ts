@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/typeorm/entities/User';
 import { UserRepository } from 'src/typeorm/repository/user.repository';
@@ -22,6 +22,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const { userId } = payload;
 
     const user = await this.userRepostiroy.findOneOrFail(userId);
+    if (!user) {
+      throw new HttpException('유효하지않는 토큰', HttpStatus.UNAUTHORIZED);
+    }
     console.log('jwt 전략: 유저아이디', userId);
     console.log('jwt 전략: 유저아이디', user);
 

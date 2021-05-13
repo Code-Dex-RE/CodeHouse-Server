@@ -20,3 +20,7 @@ base URI = http://localhost
 - uri/api
 
 - uri/docs
+
+## ERD
+
+<img src="./lib/pro-4-ERD_3.png">
