@@ -19,6 +19,11 @@ const configuration = () => ({
   kakaoClientId: process.env.KAKAO_CLIENT_ID,
   kakaoClientSecrets: process.env.KAKAO_CLIENT_SECRETS,
   kakaoCallbackURL: process.env.KAKAO_CALLBACK_URL,
+  aws_host: process.env.AWS_HOST,
+  aws_user: process.env.AWS_USER,
+  aws_pw: process.env.AWS_PW,
+  aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+  aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
 export const config: ConfigModuleOptions = {

@@ -37,3 +37,6 @@ lerna-debug.log*
 db/data
 cert.*
 *.pem
+.aws
+.build
+serverless.yml

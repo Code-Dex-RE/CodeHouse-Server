@@ -18,7 +18,12 @@ export const typeOrmConfig: TypeOrmModuleOptions = inContainer
     }
   : {
       type: 'postgres',
-      url: 'asdfasdf',
+      //   url: process.env.DATABASE_URL,
+      host: 'pro4.cklvpmwsssul.ap-northeast-2.rds.amazonaws.com',
+      port: 5432,
+      database: 'postgres',
+      username: 'pro4',
+      password: 'pro4pro4',
       synchronize: true,
       logging: true,
       entities,
@@ -32,3 +37,16 @@ export const typeOrmConfig: TypeOrmModuleOptions = inContainer
 //     logging: true,
 //     entities,
 //   }
+
+// {
+//     type: 'postgres',
+//     //   url: process.env.DATABASE_URL,
+//     host: process.env.AWS_HOST,
+//     port: 5432,
+//     database: 'postgres',
+//     username: process.env.AWS_USER,
+//     password: process.env.AWS_PW,
+//     synchronize: true,
+//     logging: true,
+//     entities,
+//   };

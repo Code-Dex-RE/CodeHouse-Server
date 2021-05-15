@@ -23,15 +23,17 @@ import express from 'express';
 
 import { ExpressPeerServer } from 'peer';
 
-const httpsOptions = {
-  key: fs.readFileSync('src/key.pem'),
-  cert: fs.readFileSync('src/cert.pem'),
-};
-// const app_ex = express();
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // httpsOptions,
-  });
+// const httpsOptions = {
+//   key: fs.readFileSync('src/key.pem'),
+//   cert: fs.readFileSync('src/cert.pem'),
+// };
+export async function bootstrap() {
+  const expressApp = express();
+  const app = await NestFactory.create<NestExpressApplication>(
+    //   const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(expressApp),
+  );
 
   const env = app.get(ConfigService);
   const allowedHosts = env.get('allowed-hosts');
@@ -90,6 +92,8 @@ async function bootstrap() {
 
   setSwagger(app);
 
-  await app.listen(port, () => console.log(`서버 port: ${port}로 열림`));
+  //   await app.listen(port, () => console.log(`서버 port: ${port}로 열림`));
+
+  return app;
 }
-bootstrap();
+// bootstrap();
