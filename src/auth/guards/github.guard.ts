@@ -11,7 +11,7 @@ export class GithubAuthGuard extends AuthGuard('github') {
     const request = context.switchToHttp().getRequest();
     const result = (await super.canActivate(context)) as boolean;
 
-    console.log('깃허브 어스가드 :', result);
+    // console.log('깃허브 어스가드 :', result);
     await super.logIn(request);
     return result;
     // return super.canActivate(context);

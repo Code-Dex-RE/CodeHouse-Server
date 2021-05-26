@@ -9,6 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Channel } from 'src/typeorm/entities/Channel';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateChannelDto } from 'src/typeorm/dto/create-channel.dto';
 import { UpdateChannelDto } from 'src/typeorm/dto/update-channel.dto';
@@ -22,9 +23,15 @@ export class ChatController {
    *
    * @todo 전부다 임시임 -> chat gateway에서 서비스 로직 직접연결
    */
-  @Get()
-  getChannels() {
-    return this.chatService.getChannels();
+  @Get('list')
+  async getChannels():Promise<Channel[]>{
+  const chatList= await this.chatService.getChannels();
+
+  return Object.assign({
+      channelList:chatList,
+      statusCode:200,
+      statusMessage:'채널리스트 조회!'
+  })
   }
 
   @Post('')
@@ -47,7 +54,18 @@ export class ChatController {
 
   @Get('join/:channelId')
   @UseGuards(JwtAuthGuard)
-  joinChannel(@Req() req, @Param('channelId') channelId: string) {
+  joinChannel(@Req() req, @Param('channelId') channelId: number) {
     return this.chatService.joinChannel(req, channelId);
   }
+
+  @Get('kick/:channel_id/:member_id')
+  @UseGuards(JwtAuthGuard)
+  kickMember(
+    @Req() req,
+    @Param('channel_id') channelId: number,
+    @Param('member_id') memberId: number,
+  ) {
+    return this.chatService.kickMember(req.user.id, channelId, memberId);
+  }
+
 }

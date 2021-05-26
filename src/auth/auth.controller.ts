@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   UseGuards,
+  HttpCode
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -87,7 +88,7 @@ export class AuthController {
   //   @UseGuards(JwtAuthGuard)
   @UseGuards(SessionGuard)
   gitStatus(@SessionUser() user: any) {
-    return user;
+    return user || false;
   }
 
   @Get('me/jwt')
@@ -114,7 +115,13 @@ export class AuthController {
   }
 
   @Get('test')
-  testSeesion(@Req() req) {
-    return this.authService.testSeesion(req);
+  @HttpCode(200)
+  testSeesion(@Req() req, @Res() res) {
+    return this.authService.testSeesion(req, res);
+  }
+
+  @Get('test1')
+  testSeesion1(@Req() req, @Res() res) {
+    return this.authService.testSeesion2(req,res);
   }
 }

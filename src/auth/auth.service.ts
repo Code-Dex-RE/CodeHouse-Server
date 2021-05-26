@@ -16,7 +16,7 @@ import { CreateUserDto } from 'src/typeorm/dto/create-user.dto';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly client_url_signup = process.env.CLIENT_URL_SIGNUP;
-  private readonly client_url_home = 'http://localhost:8000/home';
+  private readonly client_url_home = 'http://localhost:8000';
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -39,9 +39,13 @@ export class AuthService {
       await this.userRepository.save(newUser);
 
       const accessToken = this.jwtService.sign({ userId: newUser.id });
-      res.cookie('jwt', accessToken, { httpOnly: true });
-
+      res.cookie('jwt', accessToken);
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,Content-Type, Accept, Authorization");
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+      res.setHeader('Authorization', accessToken);
       return res.redirect(this.client_url_signup);
+      // return {accessToken} || false;
     }
 
     if (provider === 'github' && !user.github) {
@@ -56,16 +60,28 @@ export class AuthService {
     const accessToken = this.jwtService.sign({ userId: user.id });
 
     //유저 이름 설정 안되어있으면 회원가입 창으로 리디렉션
-    if (user.name === null) {
-      res.cookie('jwt', accessToken, { httpOnly: true });
+    if (user.name === null||user.name===""||user.name===undefined) {
+      res.cookie('jwt', accessToken);
+      res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,Content-Type, Accept, Authorization");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+      res.setHeader('Authorization', accessToken);
       return res.redirect(this.client_url_signup);
+      // return{accessToken} || false
     }
 
-    res.cookie('jwt', accessToken, { httpOnly: true });
+    res.cookie('jwt', accessToken);
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,Content-Type, Accept, Authorization");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    console.log("bbbbbb",res.setHeader('Authorization', accessToken));
     return res.redirect(this.client_url_home);
+    // return{accessToken} || false
+
   }
 
   async register(req, data: CreateUserDto) {
+    console.log('레지스터입니다아아아아아')
     const { email } = req.user;
     const { name, bio } = data;
     const newUser = await this.userRepository.findOne({ email });
@@ -75,10 +91,18 @@ export class AuthService {
     return newUser;
   }
 
-  testSeesion(@Req() req) {
-    const passedVariable = req.session.valid;
-    req.session.valid = null;
+  testSeesion(@Req() req ,@Res() res) {
+    // const passedVariable = req.session.valid;
+    // req.session.valid = null;
 
-    return { message: '리디렉션 데이터', passedVariable };
+    console.log('tttttttt',req.header("Authorization"));
+  }
+
+  testSeesion2(@Req() req ,@Res() res) {
+    // const passedVariable = req.session.valid;
+    // req.session.valid = null;
+
+    console.log('aaaaaaaa',req.header("Authorization"));
+
   }
 }

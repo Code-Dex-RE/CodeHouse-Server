@@ -38,6 +38,12 @@ export class Channel {
   @Column()
   name!: string;
 
+
+  @ApiProperty({ description: '채널 설명입니다.', example: '여기는 아무말!' })
+  @IsString()
+  @Column()
+  dep!: string;
+
   @ApiProperty({ example: '채널 소켓 아이디?' })
   @Column({ nullable: true })
   @IsString()
@@ -52,7 +58,7 @@ export class Channel {
   member_id!: string[];
 
   @Column()
-  host_id!: string;
+  host_id!: number;
 
   // Relations
   @OneToMany((type) => ChannelChat, (chat) => chat.channel, { cascade: true })

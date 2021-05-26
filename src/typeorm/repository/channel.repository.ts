@@ -8,6 +8,8 @@ export class ChannelRepository extends Repository<Channel> {
   async createChannel(data: CreateChannelDto, userId) {
     const newChannel = new Channel();
     newChannel.name = data.name;
+    newChannel.dep=data.dep;
+    newChannel.url=data.url;
     newChannel.host = userId;
 
     try {

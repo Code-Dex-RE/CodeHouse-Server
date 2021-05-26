@@ -92,8 +92,10 @@ export class User {
   chat: ChannelChat[];
 
   @OneToMany((type) => ChannelMember, (channel) => channel.user, {
-    cascade: true,
+    // cascade: true,
+    // onDelete: 'CASCADE',
   })
+  
   channel: ChannelMember[];
 
   @OneToMany((type) => Channel, (mychannel) => mychannel.host)

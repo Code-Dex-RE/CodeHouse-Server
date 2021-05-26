@@ -32,7 +32,7 @@ import { KakaoSerializer } from './passport/kakao.serializer';
       imports: [ConfigModule],
       useFactory: async ($: ConfigService) => ({
         secret: $.get<string>('jwtSecret'),
-        signOptions: { expiresIn: '2h' },
+        signOptions: { expiresIn: '2week' },
       }),
       inject: [ConfigService],
     }),

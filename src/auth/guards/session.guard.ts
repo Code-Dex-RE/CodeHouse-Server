@@ -11,11 +11,11 @@ export class SessionGuard implements CanActivate {
 
     try {
       if (request.session.passport.user) {
-        console.log(
-          '세션가드, 리퀘스트 세션 페스포트 유저 :',
-          request.session.passport.user,
-        );
-        console.log(request.session.passport);
+        // console.log(
+        //   '세션가드, 리퀘스트 세션 페스포트 유저 :',
+        //   request.session.passport.user,
+        // );
+        // console.log(request.session.passport);
         return true;
       }
     } catch (e) {

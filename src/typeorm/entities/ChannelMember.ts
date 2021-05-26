@@ -37,20 +37,21 @@ export class ChannelMember {
   readonly deleted_at: Date;
 
   // Relations Ids
-  @ApiProperty({ readOnly: true })
+  @ApiProperty()
   @Column()
-  channel_id!: string;
+  channel_id!: number;
 
-  @ApiProperty({ readOnly: true })
+  @ApiProperty()
   @Column()
-  user_id!: string;
+  user_id!: number;
 
   // Relations
   @ManyToOne((type) => Channel, (channel) => channel.member)
-  @JoinColumn({ name: 'channel_id' })
+  @JoinColumn({ name: 'channel_id', referencedColumnName: 'id' })
   channel!: Channel;
 
-  @ManyToOne((type) => User, (user) => user.channel)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne((type) => User, (user) => user.channel,{cascade:true})
+  @JoinColumn({ name: 'user_id' ,referencedColumnName: 'id' })
   user!: User;
+  
 }

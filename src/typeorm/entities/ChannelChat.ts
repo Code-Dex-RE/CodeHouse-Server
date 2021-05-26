@@ -42,13 +42,13 @@ export class ChannelChat {
   comment: string;
 
   // Relations Ids
-  @ApiProperty({ readOnly: true })
+  @ApiProperty()
   @Column()
-  channel_id!: string;
+  channel_id!: number;
 
-  @ApiProperty({ readOnly: true })
+  @ApiProperty()
   @Column()
-  user_id!: string;
+  user_id!: number;
 
   // Relations
   @ManyToOne((type) => User, (user) => user.chat)

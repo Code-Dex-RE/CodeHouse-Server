@@ -11,7 +11,7 @@ export class KakaoAuthGuard extends AuthGuard('kakao') {
     const request = context.switchToHttp().getRequest();
     const result = (await super.canActivate(context)) as boolean;
 
-    console.log('카카오 어스가드 :', result);
+    // console.log('카카오 어스가드 :', result);
     await super.logIn(request);
     return result;
     // return super.canActivate(context);

@@ -13,11 +13,11 @@ export class CreateChatDto {
     description: '유저아이디',
   })
   @IsString()
-  user_id: string;
+  user_id: number;
 
   @ApiProperty({
     description: '채널아이디',
   })
   @IsString()
-  channel_id: string;
+  channel_id: number;
 }

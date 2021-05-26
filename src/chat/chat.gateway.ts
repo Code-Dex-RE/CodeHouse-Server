@@ -15,16 +15,27 @@ import { map } from 'rxjs/operators';
 import { Socket, Server } from 'socket.io';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Channel } from 'src/typeorm/entities/Channel';
+import { ChannelMember } from 'src/typeorm/entities/ChannelMember';
 import { ChannelRepository } from 'src/typeorm/repository/channel.repository';
 import { ChatRepository } from 'src/typeorm/repository/chat.repository';
 import { MemberRepository } from 'src/typeorm/repository/member.repository';
 
-@WebSocketGateway({ namespace: 'chat' })
+
+interface newRooom {
+  roomName: string;
+  roomDep: string;
+  roomUrl: string;
+}
+
+
+@WebSocketGateway({namespace:'/chat'})
+
 export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  implements OnGatewayInit{ //어제 한다고 주석친다고 임플린먼츠 좀 지우고 했어요
   @WebSocketServer() server: Server;
-  private activeSockets: { room: string; id: string }[] = [];
-  private chat: { room: string };
+  private activeSockets: { roomID: string; id: string }[] = [];
+  
+  // private chat: { room: any };
   private logger: Logger = new Logger('AppGateway');
 
   constructor(
@@ -33,86 +44,87 @@ export class ChatGateway
     private readonly memberRepository: MemberRepository,
   ) {}
 
-  connectedUsers: string[] = [];
+  // connectedUsers: string[] = [];
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('msgToServer')
   handleMessage(
-    @MessageBody() data: string,
+    @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
-  ): string {
-    return data;
+  ) {
+    const [roomUrl, userName, msg] = data;
+    console.log('dater',data)
+    console.log('room url',roomUrl)
+    return this.server.to(roomUrl).emit('msgToClient', data);
   }
+  // @SubscribeMessage('join')
+  // joinRoom(client: Socket, room: { newRoom: newRooom; userID: number },) {
+  //   client.join(room[0].roomUrl);
+  //   client.emit('joinRoom', room.userID);
+  // }
 
-  //클라
-  // socket.emit("join", {room, userId});
+ @SubscribeMessage('join')
+  public async joinRoom(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: Socket,
+    // client: Socket,
+    // room: { newRoom: newRooom; userID: number },
+ 
 
-  //서버
-  @SubscribeMessage('join')
-  @UseGuards(JwtAuthGuard)
-  public async joinRoom(client: Socket, room: string): Promise<void> {
-    const chat = await this.chatRepository.find({ channel_id: room });
+  ) {
+   
+    const [roomName, roomDep, roomUrl, id] = data;
+    console.log('data',data)
+    console.log('data[0]',data[0])
+    console.log('data.id',id)
+    client.join(roomUrl);
+    client.to(roomUrl).broadcast.emit('joinRoom', id);
+  
+    // this.channelRepository
+    //   .findOne({
+    //     url: room[0].roomUrl,
+    //   })
+    //   .then(async (rooom) => {
+    //     if (!rooom) {
+    //       //   this.chatService.createChannel();
+    //       const newRooom = new Channel();
+    //       newRooom.name = room[0].roomName;
+    //       newRooom.dep = room[0].roomDep;
+    //       newRooom.url = room[0].roomUrl;
+    //       newRooom.host_id = room[1];
+    //       await this.channelRepository.save(newRooom);
 
-    // const channel = new Channel();
-    // channel.name = room;
-    // channel.host = userId;
-
-    const existingSocket = this.activeSockets?.find(
-      (socket) => socket.room === room && socket.id === client.id,
-    );
-    if (!existingSocket) {
-      this.activeSockets = [...this.activeSockets, { id: client.id, room }];
-      client.emit(`${room}-update-user-list`, {
-        users: this.activeSockets
-          .filter((socket) => socket.room === room && socket.id !== client.id)
-          .map((existingSocket) => existingSocket.id),
-      });
-
-      client.broadcast.emit(`${room}-update-user-list`, {
-        users: [client.id],
-        chat,
-      });
-    }
-
-    return this.logger.log(
-      `클라이언트 ${client.id}가 방에 조인했습니다. ${room}`,
-    );
+    //       const newMember = new ChannelMember();
+    //       newMember.user_id = room[1];
+    //       newMember.channel_id = newRooom.id;
+    //       await this.memberRepository.save(newMember);
+    //     } else {
+    //       const preMember = await this.memberRepository.findOne({
+    //         channel_id: rooom.id,
+    //         user_id: room[1],
+    //       });
+    //       if (!preMember) {
+    //         const newMember = new ChannelMember();
+    //         newMember.user_id = room[1];
+    //         newMember.channel_id = rooom.id;
+    //         await this.memberRepository.save(newMember);
+    //       }
+    //     }
+    //   }).catch((error)=>{
+    //     console.log(error);
+    //   });
   }
+  
 
-  @SubscribeMessage('make-answer')
-  public makeAnswer(client: Socket, data: any): void {
-    client.to(data.to).emit('answer-maed', {
-      socket: client.id,
-      answer: data.answer,
-    });
-  }
-
-  @SubscribeMessage('reject-call')
-  public rejectCall(client: Socket, data: any): void {
-    client.to(data.from).emit('call-rejected', {
-      socket: client.id,
-    });
-  }
 
   afterInit(server: Server): void {
     this.logger.log('Init');
   }
 
-  handleDisconnect(client: Socket): void {
-    const existingSocket = this.activeSockets.find(
-      (socket) => socket.id === client.id,
-    );
-    if (!existingSocket) return;
-
-    this.activeSockets = this.activeSockets.filter(
-      (socket) => socket.id !== client.id,
-    );
-    client.broadcast.emit(`${existingSocket.room}-remove-user`, {
-      socketId: client.id,
-    });
-
-    this.logger.log(`클라이언트 연결끊김: ${client.id}`);
-  }
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`클라이언트 연결됨: ${client}`);
-  }
+  // handleDisconnect(client: Socket): void {
+  //   this.logger.log(`클라이언트 연결끊김: ${client.id}`);
+  // }
+  // handleConnection(client: Socket, ...args: any[]) {
+  //   this.logger.log(`클라이언트 연결됨: ${client.id}`);
+  //   // console.log(client);
+  // }
 }
