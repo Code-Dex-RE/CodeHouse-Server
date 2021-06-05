@@ -15,6 +15,11 @@ declare namespace NodeJS {
     KAKAO_CLIENT_ID?: string;
     KAKAO_CLIENT_SECRETS?: string;
     KAKAO_CALLBACK_URL?: string;
+    AWS_HOST?: string;
+    AWS_USER?: string;
+    AWS_PW?: string;
+    AWS_ACCESS_KEY_ID?: string;
+    AWS_SECRET_ACCESS_KEY?: string;
   }
   export type Environment = 'DEVELOPMENT' | 'PRODUCTION' | 'TEST';
 }

@@ -6,12 +6,7 @@ const inContainer = Boolean(process.env.IN_CONTAINER);
 export const typeOrmConfig: TypeOrmModuleOptions = inContainer
   ? {
       type: 'postgres',
-      //   url: process.env.DATABASE_URL,
-      host: 'pro4.cklvpmwsssul.ap-northeast-2.rds.amazonaws.com',
-      port: 5432,
-      database: 'postgres',
-      username: 'pro4',
-      password: 'pro4pro4',
+      url: process.env.DATABASE_URL,
       synchronize: true,
       logging: true,
       entities,

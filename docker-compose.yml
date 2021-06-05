@@ -21,19 +21,18 @@ services:
     volumes:
       - './:/app:delegated'
       - '/app/node_modules'
-#     depends_on:
-#       - pg-pro4
+    depends_on:
+      - pg-pro4
 
-#   pg-pro4:
-#     container_name: pg-pro4
-#     image: postgres:13.2-alpine
-#     restart: always
-#     environment:
-#       - POSTGRES_USER=pro4
-#       - POSTGRES_PASSWORD=pro4
-#       - POSTGRES_DB=pro4
-#     volumes:
-#       - './db/data:/var/lib/postgresql/data'
-
-# volumes:
-#   db:
+  pg-pro4:
+    container_name: pg-pro4
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=pro4
+      - POSTGRES_PASSWORD=pro4
+      - POSTGRES_DB=pro4
+    volumes:
+      - './db/data:/var/lib/postgresql/data'
+volumes:
+  db:

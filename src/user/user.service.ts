@@ -1,10 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { User } from 'src/typeorm/entities/User';
 import { UserRepository } from 'src/typeorm/repository/user.repository';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository, // @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async getUsers(): Promise<User[]> {
     console.log('유저 확인');
@@ -16,4 +24,9 @@ export class UserService {
     }
     return users;
   }
+
+  //   async searchForUsers(search: string) {
+  //     const test = this.cacheManager.get(search);
+  //     return test;
+  //   }
 }

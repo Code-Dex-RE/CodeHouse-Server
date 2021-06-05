@@ -18,8 +18,8 @@ import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-import { Server, createServer } from 'https';
-import express from 'express';
+// import { Server, createServer } from 'https';
+// import express from 'express';
 
 import { ExpressPeerServer } from 'peer';
 
@@ -28,12 +28,13 @@ import { ExpressPeerServer } from 'peer';
 //   cert: fs.readFileSync('src/cert.pem'),
 // };
 export async function bootstrap() {
-  const expressApp = express();
-  const app = await NestFactory.create<NestExpressApplication>(
-    //   const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    new ExpressAdapter(expressApp),
-  );
+  //   const expressApp = express();
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  //   const app = await NestFactory.create<NestExpressApplication>(
+  //     //   const app = await NestFactory.create<NestExpressApplication>(
+  //     AppModule,
+  //     new ExpressAdapter(expressApp),
+  //   );
 
   const env = app.get(ConfigService);
   const allowedHosts = env.get('allowed-hosts');
@@ -92,8 +93,8 @@ export async function bootstrap() {
 
   setSwagger(app);
 
-  //   await app.listen(port, () => console.log(`서버 port: ${port}로 열림`));
+  await app.listen(port, () => console.log(`서버 port: ${port}로 열림`));
 
-  return app;
+  //   return app;
 }
-// bootstrap();
+bootstrap();
