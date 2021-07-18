@@ -106,10 +106,9 @@ export class AuthController {
   })
   @Get('logout')
   //   @UseGuards(AuthenticatedGuard)
-  logout(@Req() req: Request, @Res() res) {
+  logout(@Req() req: Request, @Res() res:Response) {
     console.log('로그아웃 실행');
-    req.logOut();
-    return res.redirect('/');
+     return this.authService.logout(res);
     //클라이언트 홈 URL
     // res.redirect('/');
   }

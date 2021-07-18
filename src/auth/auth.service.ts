@@ -17,6 +17,7 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly client_url_signup = process.env.CLIENT_URL_SIGNUP;
   private readonly client_url_home = 'http://localhost:8000';
+  private readonly client_url_login = 'http://localhost:8000/login';
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -74,7 +75,7 @@ export class AuthService {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,Content-Type, Accept, Authorization");
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    console.log("bbbbbb",res.setHeader('Authorization', accessToken));
+   res.setHeader('Authorization', accessToken)
     return res.redirect(this.client_url_home);
     // return{accessToken} || false
 
@@ -89,6 +90,14 @@ export class AuthService {
     newUser.bio = bio;
     await this.userRepository.save(newUser);
     return newUser;
+  }
+
+  async logout(res:Response) {
+    res.cookie('jwt', '');
+    res.setHeader('Authorization', '');
+    res.clearCookie('jwt');
+    console.log("로그아웃")
+    return res.redirect(this.client_url_home);
   }
 
   testSeesion(@Req() req ,@Res() res) {
